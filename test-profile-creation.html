@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Profile Creation</title>
+</head>
+<body>
+  <h1>WhatsApp Profile Creation Test</h1>
+  
+  <div>
+    <h2>Step 1: Login</h2>
+    <div>
+      <label for="username">Username:</label>
+      <input type="text" id="username" value="testuser">
+    </div>
+    <div>
+      <label for="password">Password:</label>
+      <input type="password" id="password" value="testpass123">
+    </div>
+    <button id="loginBtn">Login</button>
+    <div id="loginResult"></div>
+  </div>
+  
+  <div>
+    <h2>Step 2: Create Profile</h2>
+    <div>
+      <label for="profileLabel">Profile Label:</label>
+      <input type="text" id="profileLabel" value="Test Profile">
+    </div>
+    <button id="createProfileBtn" disabled>Create Profile</button>
+    <div id="profileResult"></div>
+  </div>
+  
+  <script>
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, password }),
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const user = await response.json();
+          document.getElementById('loginResult').innerHTML = `Logged in as: ${user.username}`;
+          document.getElementById('createProfileBtn').disabled = false;
+        } else {
+          const error = await response.text();
+          document.getElementById('loginResult').innerHTML = `Login failed: ${error}`;
+        }
+      } catch (error) {
+        document.getElementById('loginResult').innerHTML = `Error: ${error.message}`;
+      }
+    });
+    
+    document.getElementById('createProfileBtn').addEventListener('click', async () => {
+      const label = document.getElementById('profileLabel').value;
+      
+      try {
+        const response = await fetch('/api/profiles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ label }),
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const profile = await response.json();
+          document.getElementById('profileResult').innerHTML = `Profile created: ${profile.label} (ID: ${profile.id})`;
+        } else {
+          const error = await response.text();
+          document.getElementById('profileResult').innerHTML = `Profile creation failed: ${error}`;
+        }
+      } catch (error) {
+        document.getElementById('profileResult').innerHTML = `Error: ${error.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
