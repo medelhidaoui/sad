@@ -5,7 +5,10 @@ import {
   Users, 
   Settings, 
   HelpCircle,
-  LogOut
+  LogOut,
+  Send,
+  FileSpreadsheet,
+  Link as LinkIcon
 } from "lucide-react";
 import { useState } from "react";
 import { SettingsModal } from "../profile/SettingsModal";
@@ -34,16 +37,32 @@ export function Sidebar() {
       
       <nav className="flex-1 overflow-y-auto p-2">
         <Link href="/">
-          <a className={`flex items-center p-3 mb-2 rounded-md hover:bg-whatsapp-light transition-colors 
-            ${location === '/' ? 'text-whatsapp-dark-green bg-whatsapp-light font-medium' : ''}`}>
+          <a className={`flex items-center p-3 mb-2 rounded-md hover:bg-whatsapp-light-green transition-colors 
+            ${location === '/' ? 'text-whatsapp-dark-green bg-whatsapp-light-green font-medium' : ''}`}>
             <Users className="mr-3 h-5 w-5" />
             <span>Profiles</span>
           </a>
         </Link>
         
+        <Link href="/url-send">
+          <a className={`flex items-center p-3 mb-2 rounded-md hover:bg-whatsapp-light-green transition-colors 
+            ${location === '/url-send' ? 'text-whatsapp-dark-green bg-whatsapp-light-green font-medium' : ''}`}>
+            <LinkIcon className="mr-3 h-5 w-5" />
+            <span>URL Messaging</span>
+          </a>
+        </Link>
+        
+        <Link href="/bulk-message">
+          <a className={`flex items-center p-3 mb-2 rounded-md hover:bg-whatsapp-light-green transition-colors 
+            ${location === '/bulk-message' ? 'text-whatsapp-dark-green bg-whatsapp-light-green font-medium' : ''}`}>
+            <FileSpreadsheet className="mr-3 h-5 w-5" />
+            <span>Bulk Messaging</span>
+          </a>
+        </Link>
+        
         <button 
           onClick={() => setIsSettingsOpen(true)}
-          className="flex items-center p-3 mb-2 rounded-md hover:bg-whatsapp-light transition-colors w-full text-left"
+          className="flex items-center p-3 mb-2 rounded-md hover:bg-whatsapp-light-green transition-colors w-full text-left"
         >
           <Settings className="mr-3 h-5 w-5" />
           <span>Settings</span>
@@ -53,7 +72,7 @@ export function Sidebar() {
           href="https://github.com/user/whatsapp-manager" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="flex items-center p-3 mb-2 rounded-md hover:bg-whatsapp-light transition-colors"
+          className="flex items-center p-3 mb-2 rounded-md hover:bg-whatsapp-light-green transition-colors"
         >
           <HelpCircle className="mr-3 h-5 w-5" />
           <span>Help</span>
