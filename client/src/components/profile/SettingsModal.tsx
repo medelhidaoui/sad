@@ -34,6 +34,12 @@ const formSchema = z.object({
   username: z.string().optional(),
   password: z.string().optional(),
   browserPath: z.string().optional(),
+  // Anti-spam and session persistence settings
+  minMessageDelay: z.number().min(1).max(60),
+  maxMessageDelay: z.number().min(1).max(120),
+  maxMessagesPerDay: z.number().min(1).max(1000),
+  enableRandomDelay: z.boolean(),
+  sessionPersistenceDays: z.number().min(1).max(365),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -53,6 +59,12 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
       username: "",
       password: "",
       browserPath: "",
+      // Default values for anti-spam settings
+      minMessageDelay: 3,
+      maxMessageDelay: 5,
+      maxMessagesPerDay: 50,
+      enableRandomDelay: true,
+      sessionPersistenceDays: 30,
     },
   });
   
@@ -63,6 +75,12 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
         username: settings.username || "",
         password: settings.password || "",
         browserPath: settings.browserPath || "",
+        // Reset anti-spam settings with values from database or use defaults
+        minMessageDelay: settings.minMessageDelay || 3,
+        maxMessageDelay: settings.maxMessageDelay || 5,
+        maxMessagesPerDay: settings.maxMessagesPerDay || 50,
+        enableRandomDelay: settings.enableRandomDelay !== undefined ? settings.enableRandomDelay : true,
+        sessionPersistenceDays: settings.sessionPersistenceDays || 30,
       });
     }
   }, [settings, form, open]);
@@ -193,6 +211,121 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
                       </Button>
                     </div>
                     <p className="text-xs text-gray-500 mt-1">Auto-detected Chrome/Edge path</p>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div>
+              <h4 className="text-base font-medium mb-3">Anti-Spam & Anti-Block Settings</h4>
+              
+              <FormField
+                control={form.control}
+                name="enableRandomDelay"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between space-x-2 space-y-0 rounded-md border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel>Enable Random Message Delay</FormLabel>
+                      <FormDescription className="text-xs">
+                        Adds a random delay between messages to avoid spam detection
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                <FormField
+                  control={form.control}
+                  name="minMessageDelay"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Min Delay (seconds)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="3" 
+                          {...field} 
+                          onChange={e => field.onChange(parseInt(e.target.value))} 
+                          value={field.value}
+                          disabled={!form.watch("enableRandomDelay")}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="maxMessageDelay"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Max Delay (seconds)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="5" 
+                          {...field} 
+                          onChange={e => field.onChange(parseInt(e.target.value))} 
+                          value={field.value}
+                          disabled={!form.watch("enableRandomDelay")}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <FormField
+                control={form.control}
+                name="maxMessagesPerDay"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <FormLabel>Max Messages Per Day</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        placeholder="50" 
+                        {...field} 
+                        onChange={e => field.onChange(parseInt(e.target.value))} 
+                        value={field.value}
+                      />
+                    </FormControl>
+                    <FormDescription className="text-xs">
+                      Limit the number of messages sent per day to avoid banning
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="sessionPersistenceDays"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <FormLabel>Session Persistence (days)</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        placeholder="30" 
+                        {...field} 
+                        onChange={e => field.onChange(parseInt(e.target.value))} 
+                        value={field.value}
+                      />
+                    </FormControl>
+                    <FormDescription className="text-xs">
+                      Number of days to keep sessions active without re-authentication
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

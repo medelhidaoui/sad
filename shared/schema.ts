@@ -26,6 +26,12 @@ export const settings = pgTable("settings", {
   password: text("password"),
   browserPath: text("browser_path"),
   userId: integer("user_id").notNull(),
+  // Anti-spam and anti-block settings
+  minMessageDelay: integer("min_message_delay").default(3),
+  maxMessageDelay: integer("max_message_delay").default(5),
+  maxMessagesPerDay: integer("max_messages_per_day").default(50),
+  enableRandomDelay: boolean("enable_random_delay").default(true),
+  sessionPersistenceDays: integer("session_persistence_days").default(30),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -53,6 +59,11 @@ export const insertSettingsSchema = createInsertSchema(settings).pick({
   password: true,
   browserPath: true,
   userId: true,
+  minMessageDelay: true,
+  maxMessageDelay: true,
+  maxMessagesPerDay: true,
+  enableRandomDelay: true,
+  sessionPersistenceDays: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

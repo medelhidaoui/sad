@@ -115,12 +115,21 @@ export class WhatsAppManager {
       session.qrCode = undefined;
       this.broadcastSessionUpdate(session);
       
-      // Update profile status in storage
+      // Get session data for persistence
+      const sessionData = JSON.stringify({
+        lastConnection: new Date().toISOString(),
+        status: 'connected'
+      });
+      
+      // Update profile status in storage with session data for persistence
       await storage.updateProfile(profileId, { 
         label: profile.label,
         status: 'connected',
-        lastActive: new Date().toISOString()
+        lastActive: new Date().toISOString(),
+        sessionData: sessionData
       });
+      
+      console.log(`Profile ${profileId} (${profile.label}) is now connected and session persisted`);
     });
     
     client.on('authenticated', () => {
@@ -217,6 +226,12 @@ export class WhatsAppManager {
       throw new Error(`Profile with ID ${profileId} not found`);
     }
     
+    // Get user settings for anti-spam features
+    const userSettings = await storage.getSettings(profile.userId);
+    if (!userSettings) {
+      throw new Error('User settings not found');
+    }
+    
     // Format number
     let formattedNumber = to.replace(/\D/g, '');
     
@@ -230,6 +245,16 @@ export class WhatsAppManager {
       const isRegistered = await client.isRegisteredUser(formattedNumber);
       if (!isRegistered) {
         throw new Error(`The number ${to} is not registered on WhatsApp`);
+      }
+      
+      // Apply anti-spam/anti-block delay
+      if (userSettings.enableRandomDelay) {
+        const minDelay = userSettings.minMessageDelay || 3;
+        const maxDelay = userSettings.maxMessageDelay || 5;
+        const randomDelay = Math.floor(Math.random() * (maxDelay - minDelay + 1) + minDelay);
+        
+        console.log(`Applying anti-spam delay of ${randomDelay} seconds before sending message`);
+        await new Promise(resolve => setTimeout(resolve, randomDelay * 1000));
       }
       
       // Send message
