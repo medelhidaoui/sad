@@ -43,11 +43,11 @@ export function ProfileCard({ profile }: ProfileCardProps) {
     const status = profile.sessionStatus || profile.status;
     
     if (status === 'connected' || status === 'authenticated') {
-      return 'text-status-connected';
+      return 'bg-whatsapp-green';
     } else if (status === 'disconnected' || status === 'error') {
-      return 'text-status-disconnected';
+      return 'bg-red-500';
     } else {
-      return 'text-status-connecting';
+      return 'bg-yellow-500';
     }
   };
   
@@ -167,7 +167,7 @@ export function ProfileCard({ profile }: ProfileCardProps) {
       
       <div className="px-4 py-3 bg-gray-50 border-t border-gray-100">
         {isConnecting ? (
-          <div className="flex items-center justify-center text-status-connecting">
+          <div className="flex items-center justify-center text-whatsapp-dark-green">
             <Loader2 className="h-4 w-4 animate-spin mr-2" />
             <span className="text-sm">Establishing connection...</span>
           </div>
