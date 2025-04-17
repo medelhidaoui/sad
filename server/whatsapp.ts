@@ -1,8 +1,9 @@
 import { Client } from 'whatsapp-web.js';
-import { WebSocketServer } from 'ws';
+import { WebSocketServer, WebSocket } from 'ws';
 import { Server } from 'http';
 import path from 'path';
 import fs from 'fs';
+import QRCode from 'qrcode';
 import { Profile, WhatsAppSession } from '@shared/schema';
 import { storage } from './storage';
 
@@ -102,11 +103,27 @@ export class WhatsAppManager {
     this.broadcastSessionUpdate(session);
     
     // Set up event listeners
-    client.on('qr', (qr) => {
+    client.on('qr', async (qr) => {
       console.log(`QR Code received for profile ${profileId}`);
-      session.qrCode = qr;
-      session.status = 'qr_ready';
-      this.broadcastSessionUpdate(session);
+      try {
+        // Generate HTML for QR code
+        const qrHtml = await QRCode.toString(qr, {
+          type: 'svg',
+          margin: 2,
+          color: {
+            dark: "#128C7E",  // WhatsApp dark green
+            light: "#FFFFFF"
+          }
+        });
+        
+        session.qrCode = qrHtml;
+        session.status = 'qr_ready';
+        this.broadcastSessionUpdate(session);
+      } catch (error) {
+        console.error(`Error generating QR code for profile ${profileId}:`, error);
+        session.status = 'error';
+        this.broadcastSessionUpdate(session);
+      }
     });
     
     client.on('ready', async () => {

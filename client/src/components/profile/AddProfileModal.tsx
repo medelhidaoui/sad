@@ -151,11 +151,8 @@ export function AddProfileModal({ open, onClose }: AddProfileModalProps) {
               <div className="flex flex-col items-center">
                 {qrCode ? (
                   <div className="bg-white p-3 border border-gray-200 rounded-lg mb-4">
-                    <img 
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrCode)}`} 
-                      alt="QR Code" 
-                      className="w-48 h-48" 
-                    />
+                    <div dangerouslySetInnerHTML={{ __html: qrCode }} 
+                         className="w-48 h-48 flex items-center justify-center" />
                   </div>
                 ) : (
                   <div className="flex items-center justify-center w-48 h-48 border border-gray-200 rounded-lg mb-4">
