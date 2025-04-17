@@ -79,11 +79,11 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
         password: settings.password || "",
         browserPath: settings.browserPath || "",
         // Reset anti-spam settings with values from database or use defaults
-        minMessageDelay: settings.minMessageDelay !== null ? settings.minMessageDelay : 3,
-        maxMessageDelay: settings.maxMessageDelay !== null ? settings.maxMessageDelay : 5,
-        maxMessagesPerDay: settings.maxMessagesPerDay !== null ? settings.maxMessagesPerDay : 50,
-        enableRandomDelay: settings.enableRandomDelay !== null ? settings.enableRandomDelay : true,
-        sessionPersistenceDays: settings.sessionPersistenceDays !== null ? settings.sessionPersistenceDays : 30,
+        minMessageDelay: settings.minMessageDelay ?? 3,
+        maxMessageDelay: settings.maxMessageDelay ?? 5,
+        maxMessagesPerDay: settings.maxMessagesPerDay ?? 50,
+        enableRandomDelay: settings.enableRandomDelay ?? true,
+        sessionPersistenceDays: settings.sessionPersistenceDays ?? 30,
       });
     }
   }, [settings, form, open]);

@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --whatsapp-green: #25D366;
+  --whatsapp-dark-green: #128C7E;
+  --whatsapp-light-green: #DCF8C6;
+  --whatsapp-teal: #075E54;
+  --whatsapp-blue: #34B7F1;
+  --whatsapp-background: #ECE5DD;
+  --whatsapp-chat-bg: #E5DDD5;
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -9,5 +19,63 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .bg-whatsapp-green {
+    background-color: var(--whatsapp-green);
+  }
+  
+  .bg-whatsapp-dark-green {
+    background-color: var(--whatsapp-dark-green);
+  }
+  
+  .bg-whatsapp-light-green {
+    background-color: var(--whatsapp-light-green);
+  }
+  
+  .bg-whatsapp-teal {
+    background-color: var(--whatsapp-teal);
+  }
+  
+  .bg-whatsapp-blue {
+    background-color: var(--whatsapp-blue);
+  }
+  
+  .text-whatsapp-green {
+    color: var(--whatsapp-green);
+  }
+  
+  .text-whatsapp-dark-green {
+    color: var(--whatsapp-dark-green);
+  }
+  
+  .text-whatsapp-teal {
+    color: var(--whatsapp-teal);
+  }
+  
+  .text-whatsapp-blue {
+    color: var(--whatsapp-blue);
+  }
+  
+  .hover\:bg-whatsapp-dark-green:hover {
+    background-color: var(--whatsapp-dark-green);
+  }
+  
+  .hover\:text-whatsapp-green:hover {
+    color: var(--whatsapp-green);
+  }
+  
+  .border-whatsapp-green {
+    border-color: var(--whatsapp-green);
+  }
+  
+  .focus\:border-whatsapp-green:focus {
+    border-color: var(--whatsapp-green);
+  }
+  
+  .focus\:ring-whatsapp-green:focus {
+    --tw-ring-color: var(--whatsapp-green);
   }
 }

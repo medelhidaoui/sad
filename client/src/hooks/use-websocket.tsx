@@ -7,6 +7,7 @@ export function useWebSocket() {
   const [isConnected, setIsConnected] = useState(false);
   const [sessionUpdates, setSessionUpdates] = useState<Record<number, WhatsAppSession>>({});
   const socketRef = useRef<WebSocket | null>(null);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -14,6 +15,17 @@ export function useWebSocket() {
     }
     
     const connectWebSocket = () => {
+      // If there's already a socket connection, don't create another one
+      if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+        return socketRef.current;
+      }
+      
+      // If there's a pending reconnection, clear it
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
+      }
+      
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
       const wsUrl = `${protocol}//${window.location.host}/ws`;
       
@@ -29,9 +41,10 @@ export function useWebSocket() {
         console.log("WebSocket disconnected");
         setIsConnected(false);
         
-        // Try to reconnect after a delay
-        setTimeout(() => {
+        // Try to reconnect after a delay, but store the timeout reference
+        reconnectTimeoutRef.current = setTimeout(() => {
           connectWebSocket();
+          reconnectTimeoutRef.current = null;
         }, 5000);
       };
       
@@ -67,11 +80,19 @@ export function useWebSocket() {
       return socket;
     };
     
+    // Connect only once
     const socket = connectWebSocket();
     
+    // Cleanup function
     return () => {
-      if (socket) {
-        socket.close();
+      if (socketRef.current) {
+        socketRef.current.close();
+        socketRef.current = null;
+      }
+      
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
       }
     };
   }, [user]);
