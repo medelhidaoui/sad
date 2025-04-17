@@ -51,6 +51,14 @@ export default {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+        // WhatsApp colors
+        whatsapp: {
+          green: "#25D366",
+          "dark-green": "#128C7E",
+          "light-green": "#DCF8C6",
+          blue: "#34B7F1",
+          gray: "#ECE5DD"
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

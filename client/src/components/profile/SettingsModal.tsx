@@ -16,13 +16,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Switch } from "@/components/ui/switch";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { Settings } from "@shared/schema";
 
 interface SettingsModalProps {
   open: boolean;
@@ -47,7 +50,7 @@ type FormData = z.infer<typeof formSchema>;
 export function SettingsModal({ open, onClose }: SettingsModalProps) {
   const { toast } = useToast();
   
-  const { data: settings, isLoading } = useQuery({
+  const { data: settings, isLoading } = useQuery<Settings>({
     queryKey: ['/api/settings'],
     enabled: open,
   });
