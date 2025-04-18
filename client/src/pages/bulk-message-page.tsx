@@ -75,13 +75,47 @@ export default function BulkMessagePage() {
   };
   
   const parseCSV = (text: string): CSVRow[] => {
-    const lines = text.split(/\\r?\\n/).filter(line => line.trim() !== "");
+    // Fix the regex pattern to properly split by newlines
+    const lines = text.split(/\r?\n/).filter(line => line.trim() !== "");
+    
+    if (lines.length === 0) {
+      throw new Error("CSV file appears to be empty");
+    }
+    
     const headers = lines[0].split(',').map(header => header.trim());
+    
+    if (headers.length < 2 || !headers[0] || !headers[1]) {
+      throw new Error("CSV must have at least 'phone' and 'message' columns");
+    }
     
     const rows: CSVRow[] = [];
     
     for (let i = 1; i < lines.length; i++) {
-      const values = lines[i].split(',').map(value => value.trim());
+      // Skip empty lines
+      if (!lines[i].trim()) continue;
+      
+      // More robust CSV parsing - handle quoted values with commas inside
+      let values: string[] = [];
+      let currentValue = "";
+      let insideQuotes = false;
+      
+      for (let char of lines[i]) {
+        if (char === '"') {
+          insideQuotes = !insideQuotes;
+        } else if (char === ',' && !insideQuotes) {
+          values.push(currentValue.trim());
+          currentValue = "";
+        } else {
+          currentValue += char;
+        }
+      }
+      
+      // Add the last value
+      values.push(currentValue.trim());
+      
+      // Remove quotes from values if they exist
+      values = values.map(val => val.replace(/^"(.*)"$/, '$1'));
+      
       if (values.length < 2) continue;
       
       const row: CSVRow = {

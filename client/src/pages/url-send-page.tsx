@@ -25,16 +25,20 @@ export default function UrlSendPage() {
     queryKey: ['/api/profiles'],
   });
   
+  const { data: settings } = useQuery({
+    queryKey: ['/api/settings']
+  });
+
   useEffect(() => {
-    if (profile && phone && message) {
+    if (profile && phone && message && settings?.username && settings?.password) {
       const baseUrl = window.location.origin;
       const encodedMessage = encodeURIComponent(message);
-      const url = `${baseUrl}/send?from=${profile}&to=${phone}&message=${encodedMessage}`;
+      const url = `${baseUrl}/send?user=${settings.username}&pass=${settings.password}&from=${profile}&to=${phone}&message=${encodedMessage}`;
       setGeneratedUrl(url);
     } else {
       setGeneratedUrl("");
     }
-  }, [profile, phone, message]);
+  }, [profile, phone, message, settings]);
   
   const handleCopyUrl = () => {
     if (generatedUrl) {
